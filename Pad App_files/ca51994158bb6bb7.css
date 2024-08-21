@@ -1,0 +1,1 @@
+.current-page-item{position:relative}.current-page-item:before{content:"";position:absolute;left:-10px;top:.5rem;transform:translateY(-50%);width:4px;height:4px;background-color:grey;border-radius:50%;opacity:.5}.current-page-item:hover:before{opacity:1}

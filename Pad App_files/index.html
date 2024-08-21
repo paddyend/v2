@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<!-- saved from url=(0090)https://party.websim.ai/api/v1/sites/VGqiDruM2NO4BjvKj/html?origin=https%3A%2F%2Fwebsim.ai -->
+<html w-tid="0" style="--vh: 6.7px;"><head w-tid="1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>html{min-height:100%}.ctxmenu{position:fixed;border:1px solid #999;padding:2px 0;box-shadow:#aaa 3px 3px 3px;background:#fff;margin:0;z-index:9999;overflow-y:auto;font:15px Verdana, sans-serif;box-sizing:border-box}.ctxmenu li{margin:1px 0;display:block;position:relative;user-select:none}.ctxmenu li.heading{font-weight:bold;margin-left:-5px}.ctxmenu li span{display:block;padding:2px 20px;cursor:default}.ctxmenu li a{color:inherit;text-decoration:none}.ctxmenu li.icon{padding-left:15px}.ctxmenu img.icon{position:absolute;width:18px;left:10px;top:2px}.ctxmenu li.disabled{color:#ccc}.ctxmenu li.divider{border-bottom:1px solid #aaa;margin:5px 0}.ctxmenu li.interactive:hover{background:rgba(0, 0, 0, .1)}.ctxmenu li.submenu::after{content:"";position:absolute;display:block;top:0;bottom:0;right:.4em;margin:auto .1rem auto auto;border-right:1px solid #000;border-top:1px solid #000;transform:rotate(45deg);width:.3rem;height:.3rem}.ctxmenu li.submenu.disabled::after{border-color:#ccc}</style><!--<base href="" simulated-href="https://hnsound.storage.app/" w-tid="2">--><base href=".">
+<link rel="stylesheet" href="./fonts(1).css">
+<link rel="stylesheet" href="./ctxmenu.css">
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" w-tid="4">
+<title w-tid="5">Pad App</title>
+<style w-tid="6">
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f0f0;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        padding: 10px;
+        box-sizing: border-box;
+        touch-action: pan-y;
+        -webkit-tap-highlight-color: transparent;
+        overflow-y: auto;
+    }
+    .main-container {
+        width: 100%;
+        max-width: 100vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+    .pad-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .note-pad {
+        aspect-ratio: 1;
+        background-color: #000000;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 5vw;
+        cursor: pointer;
+        transition: background-color 0.2s, border 0.2s;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    .note-pad:hover, .note-pad:active {
+        background-color: #333333;
+    }
+    .active {
+        border-color: cyan;
+    }
+    #status {
+        margin-top: 10px;
+        font-size: 0.9em;
+        text-align: center;
+    }
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 300px;
+        margin-top: 10px;
+    }
+    #stop-button, #save-button {
+        padding: 15px;
+        font-size: 1em;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        flex-grow: 1;
+        margin-right: 10px;
+        touch-action: manipulation;
+    }
+    #stop-button {
+        background-color: #f44336;
+    }
+    #save-button {
+        background-color: #4CAF50;
+    }
+    #stop-button:hover, #stop-button:active {
+        background-color: #d32f2f;
+    }
+    #save-button:hover, #save-button:active {
+        background-color: #45a049;
+    }
+    #sound-bank-select {
+        padding: 10px;
+        font-size: 1em;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        flex-grow: 0;
+    }
+    #settings-icon {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        margin-bottom: 10px;
+        position: relative;
+    }
+    #settings-panel {
+        background-color: white;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: none;
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 20px;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    #settings-panel.show {
+        display: block;
+    }
+    .settings-section {
+        margin-bottom: 20px;
+    }
+    .settings-section h4 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+    }
+    .audio-input, .background-input {
+        margin-bottom: 15px;
+    }
+    .audio-input label, .background-input label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.9em;
+    }
+    .app-title {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 8px;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        pointer-events: none;
+    }
+    #background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        background-size: cover;
+        background-position: center;
+        transition: opacity 0.5s ease-in-out;
+    }
+    #opacity-control {
+        width: 100%;
+        margin-top: 10px;
+    }
+    @media (max-width: 600px) {
+        .pad-container {
+            gap: 5px;
+        }
+        .note-pad {
+            font-size: 6vw;
+        }
+        #stop-button, #save-button, #sound-bank-select {
+            font-size: 0.9em;
+            padding: 10px;
+        }
+        .app-title {
+            font-size: 6px;
+        }
+        #settings-panel {
+            max-height: 70vh;
+        }
+    }
+</style>
+</head>
+<body w-tid="7" style="touch-action: pan-y;">
+<div id="background" w-tid="8" style="background-image: none; opacity: 0;"></div>
+<div class="main-container" w-tid="9">
+    <svg id="settings-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" w-tid="10">
+        <circle cx="12" cy="12" r="3" w-tid="11"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" w-tid="12"></path>
+        <text class="app-title" w-tid="13">Pad App</text>
+    </svg>
+    <div id="settings-panel" w-tid="14">
+        <h3 w-tid="15">Configuración</h3>
+        <div class="settings-section" w-tid="16">
+            <h4 w-tid="17">Cargar Sonidos</h4>
+            <div class="audio-input" w-tid="18">
+                <label for="audio-file-1" w-tid="19">Banco de Sonidos 1:</label>
+                <input type="file" id="audio-file-1" accept="audio/*" multiple="" w-tid="20">
+            </div>
+            <div class="audio-input" w-tid="21">
+                <label for="audio-file-2" w-tid="22">Banco de Sonidos 2:</label>
+                <input type="file" id="audio-file-2" accept="audio/*" multiple="" w-tid="23">
+            </div>
+            <div class="audio-input" w-tid="24">
+                <label for="audio-file-3" w-tid="25">Banco de Sonidos 3:</label>
+                <input type="file" id="audio-file-3" accept="audio/*" multiple="" w-tid="26">
+            </div>
+            <div class="audio-input" w-tid="27">
+                <label for="audio-file-4" w-tid="28">Banco de Sonidos 4:</label>
+                <input type="file" id="audio-file-4" accept="audio/*" multiple="" w-tid="29">
+            </div>
+        </div>
+        <div class="settings-section" w-tid="30">
+            <h4 w-tid="31">Cargar Imágenes de Fondo</h4>
+            <div class="background-input" w-tid="32">
+                <label for="background-file-1" w-tid="33">Fondo Banco 1:</label>
+                <input type="file" id="background-file-1" accept="image/*" w-tid="34">
+            </div>
+            <div class="background-input" w-tid="35">
+                <label for="background-file-2" w-tid="36">Fondo Banco 2:</label>
+                <input type="file" id="background-file-2" accept="image/*" w-tid="37">
+            </div>
+            <div class="background-input" w-tid="38">
+                <label for="background-file-3" w-tid="39">Fondo Banco 3:</label>
+                <input type="file" id="background-file-3" accept="image/*" w-tid="40">
+            </div>
+            <div class="background-input" w-tid="41">
+                <label for="background-file-4" w-tid="42">Fondo Banco 4:</label>
+                <input type="file" id="background-file-4" accept="image/*" w-tid="43">
+            </div>
+            <div class="background-input" w-tid="44">
+                <label for="opacity-control" w-tid="45">Transparencia del fondo:</label>
+                <input type="range" id="opacity-control" min="0" max="1" step="0.01" value="0.5" w-tid="46">
+            </div>
+        </div>
+    </div>
+    <div class="pad-container" w-tid="47">
+        <div class="note-pad" data-note="C" w-tid="48">C</div>
+        <div class="note-pad" data-note="C#" w-tid="49">C#</div>
+        <div class="note-pad" data-note="D" w-tid="50">D</div>
+        <div class="note-pad" data-note="D#" w-tid="51">D#</div>
+        <div class="note-pad" data-note="E" w-tid="52">E</div>
+        <div class="note-pad" data-note="F" w-tid="53">F</div>
+        <div class="note-pad" data-note="F#" w-tid="54">F#</div>
+        <div class="note-pad" data-note="G" w-tid="55">G</div>
+        <div class="note-pad" data-note="G#" w-tid="56">G#</div>
+        <div class="note-pad" data-note="A" w-tid="57">A</div>
+        <div class="note-pad" data-note="A#" w-tid="58">A#</div>
+        <div class="note-pad" data-note="B" w-tid="59">B</div>
+    </div>
+    <div class="button-container" w-tid="60">
+        <button id="stop-button" w-tid="61">FIN</button>
+        <button id="save-button" w-tid="62">GUARDAR</button>
+        <select id="sound-bank-select" w-tid="63">
+            <option value="1" w-tid="64">Banco 1</option>
+            <option value="2" w-tid="65">Banco 2</option>
+            <option value="3" w-tid="66">Banco 3</option>
+            <option value="4" w-tid="67">Banco 4</option>
+        </select>
+    </div>
+    <div id="status" w-tid="68">Estado: Esperando archivos de audio...</div>
+</div>
+
+<script w-tid="69">
+    const soundBanks = {
+        1: {},
+        2: {},
+        3: {},
+        4: {}
+    };
+    const backgrounds = {
+        1: null,
+        2: null,
+        3: null,
+        4: null
+    };
+    let currentSoundBank = 1;
+    const pads = document.querySelectorAll('.note-pad');
+    const statusElement = document.getElementById('status');
+    const audioInputs = document.querySelectorAll('input[type="file"][accept="audio/*"]');
+    const backgroundInputs = document.querySelectorAll('input[type="file"][accept="image/*"]');
+    const stopButton = document.getElementById('stop-button');
+    const saveButton = document.getElementById('save-button');
+    const settingsIcon = document.getElementById('settings-icon');
+    const settingsPanel = document.getElementById('settings-panel');
+    const soundBankSelect = document.getElementById('sound-bank-select');
+    const backgroundElement = document.getElementById('background');
+    const opacityControl = document.getElementById('opacity-control');
+    let audioContext;
+    let activeSources = [];
+
+    function initAudio() {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    async function loadSound(note, file, bankNumber) {
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            soundBanks[bankNumber][note] = audioBuffer;
+            console.log(`Sonido cargado para ${note} en el banco ${bankNumber}`);
+        } catch (error) {
+            console.error(`Error al cargar el sonido para ${note} en el banco ${bankNumber}:`, error);
+        }
+    }
+
+    audioInputs.forEach((input, index) => {
+        input.addEventListener('change', async (event) => {
+            if (!audioContext) {
+                initAudio();
+            }
+
+            const files = event.target.files;
+            if (files.length !== 12) {
+                alert('Por favor, selecciona exactamente 12 archivos de audio, uno para cada nota.');
+                return;
+            }
+
+            const bankNumber = index + 1;
+            const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            
+            statusElement.textContent = `Estado: Cargando archivos de audio para el Banco ${bankNumber}...`;
+
+            try {
+                for (let i = 0; i < notes.length; i++) {
+                    await loadSound(notes[i], files[i], bankNumber);
+                    const progress = Math.round((i + 1) / notes.length * 100);
+                    statusElement.textContent = `Estado: Cargando... ${progress}%`;
+                    // Añadimos un pequeño retraso para permitir que la interfaz se actualice
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                }
+                statusElement.textContent = `Estado: Todos los sonidos cargados en el Banco ${bankNumber}. ¡Listo para tocar!`;
+            } catch (error) {
+                statusElement.textContent = `Estado: Error al cargar algunos archivos de audio en el Banco ${bankNumber}.`;
+                console.error(`Error al cargar los archivos de audio en el Banco ${bankNumber}:`, error);
+            }
+        });
+    });
+
+    backgroundInputs.forEach((input, index) => {
+        input.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    backgrounds[index + 1] = e.target.result;
+                    if (currentSoundBank === index + 1) {
+                        updateBackground();
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    function playSound(audioBuffer) {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        source.buffer = audioBuffer;
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        source.start();
+        
+        activeSources.push({ source, gainNode });
+        
+        return { source, gainNode };
+    }
+
+    function fadeOutAndStop(gainNode, source, duration = 2) {
+        const currentTime = audioContext.currentTime;
+        gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
+        gainNode.gain.linearRampToValueAtTime(0, currentTime + duration);
+        setTimeout(() => {
+            source.stop();
+            activeSources = activeSources.filter(s => s.source !== source);
+        }, duration * 1000);
+    }
+
+    function stopAllSounds() {
+        activeSources.forEach(({ gainNode, source }) => {
+            fadeOutAndStop(gainNode, source);
+        });
+        pads.forEach(pad => pad.classList.remove('active'));
+    }
+
+    pads.forEach(pad => {
+        ['touchstart', 'mousedown'].forEach(eventType => {
+            pad.addEventListener(eventType, (e) => {
+                e.preventDefault();
+                if (!audioContext) {
+                    initAudio();
+                }
+
+                const note = pad.dataset.note;
+                if (soundBanks[currentSoundBank][note]) {
+                    activeSources.forEach(({ gainNode, source }) => {
+                        fadeOutAndStop(gainNode, source);
+                    });
+
+                    pads.forEach(p => p.classList.remove('active'));
+                    pad.classList.add('active');
+                    const { source, gainNode } = playSound(soundBanks[currentSoundBank][note]);
+                    source.onended = () => {
+                        pad.classList.remove('active');
+                        activeSources = activeSources.filter(s => s.source !== source);
+                    };
+                } else {
+                    console.error(`No se encontró el archivo de sonido para la nota ${note} en el banco ${currentSoundBank}.`);
+                }
+            }, { passive: false });
+        });
+    });
+
+    stopButton.addEventListener('click', stopAllSounds);
+
+    saveButton.addEventListener('click', () => {
+        saveSoundBanks();
+    });
+
+    settingsIcon.addEventListener('click', () => {
+        settingsPanel.classList.toggle('show');
+    });
+
+    soundBankSelect.addEventListener('change', (event) => {
+        currentSoundBank = parseInt(event.target.value);
+        statusElement.textContent = `Estado: Banco de sonidos ${currentSoundBank} seleccionado.`;
+        updateBackground();
+    });
+
+    function updateBackground() {
+        if (backgrounds[currentSoundBank]) {
+            backgroundElement.style.backgroundImage = `url('${backgrounds[currentSoundBank]}')`;
+            backgroundElement.style.opacity = opacityControl.value;
+        } else {
+            backgroundElement.style.backgroundImage = 'none';
+            backgroundElement.style.opacity = '0';
+        }
+    }
+
+    opacityControl.addEventListener('input', () => {
+        updateBackground();
+    });
+
+    function saveSoundBanks() {
+        const soundBanksData = {};
+        for (let bankNumber in soundBanks) {
+            soundBanksData[bankNumber] = {};
+            for (let note in soundBanks[bankNumber]) {
+                const audioBuffer = soundBanks[bankNumber][note];
+                const channelData = audioBuffer.getChannelData(0);
+                soundBanksData[bankNumber][note] = {
+                    sampleRate: audioBuffer.sampleRate,
+                    length: audioBuffer.length,
+                    duration: audioBuffer.duration,
+                    numberOfChannels: audioBuffer.numberOfChannels,
+                    data: Array.from(channelData)
+                };
+            }
+        }
+
+        const backgroundsData = {};
+        for (let bankNumber in backgrounds) {
+            backgroundsData[bankNumber] = backgrounds[bankNumber];
+        }
+
+        const data = {
+            soundBanks: soundBanksData,
+            backgrounds: backgroundsData
+        };
+
+        localStorage.setItem('padAppData', JSON.stringify(data));
+        statusElement.textContent = 'Estado: Datos guardados correctamente.';
+    }
+
+    function loadSavedData() {
+        const savedData = localStorage.getItem('padAppData');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            
+            for (let bankNumber in data.soundBanks) {
+                for (let note in data.soundBanks[bankNumber]) {
+                    const savedBuffer = data.soundBanks[bankNumber][note];
+                    const audioBuffer = audioContext.createBuffer(
+                        savedBuffer.numberOfChannels,
+                        savedBuffer.length,
+                        savedBuffer.sampleRate
+                    );
+                    const channelData = new Float32Array(savedBuffer.data);
+                    audioBuffer.copyToChannel(channelData, 0);
+                    soundBanks[bankNumber][note] = audioBuffer;
+                }
+            }
+            
+            backgrounds = data.backgrounds;
+            
+            updateBackground();
+            statusElement.textContent = 'Estado: Datos cargados correctamente.';
+        }
+    }
+
+    window.addEventListener('load', () => {
+        initAudio();
+        loadSavedData();
+    });
+
+    updateBackground();
+
+    document.body.style.touchAction = 'pan-y';
+
+    document.addEventListener('touchmove', function (event) {
+        if (event.scale !== 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    document.body.addEventListener('touchstart', function(){}, {passive: false});
+
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            window.scrollTo(0, 1);
+        }, 0);
+    });
+
+    settingsPanel.addEventListener('touchmove', function(e) {
+        e.stopPropagation();
+    }, { passive: true });
+
+    function adjustSettingsPanelHeight() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+
+    window.addEventListener('resize', adjustSettingsPanelHeight);
+    adjustSettingsPanelHeight();
+</script>
+</body></html>
